@@ -1,6 +1,6 @@
-// Ticket workflow
+// Ticket workflow ITSM (ServiceNow style)
 
-type TicketState = 'draft' | 'open' | 'in_progress' | 'pending_review' | 'hold' | 'closed';
+import { TicketState } from "./ticket.model.js";
 
 interface State {
   name: string;
@@ -22,67 +22,67 @@ interface TicketWorkflow {
 
 const ticketWorkflow: TicketWorkflow = {
   states: {
-    draft: {
-      name: 'Draft',
-      transitions: ['open']
+    NEW: {
+      name: 'New',
+      transitions: ['IN_PROGRESS', 'CANCELED']
     },
-    open: {
-      name: 'Open',
-      transitions: ['in_progress', 'closed', 'hold']
-    },
-    in_progress: {
+    IN_PROGRESS: {
       name: 'In Progress',
-      transitions: ['open', 'pending_review', 'closed', 'hold']
+      transitions: ['ON_HOLD', 'RESOLVED', 'CANCELED']
     },
-    pending_review: {
-      name: 'Pending Review',
-      transitions: ['in_progress', 'closed', 'open']
-    },
-    hold: {
+    ON_HOLD: {
       name: 'On Hold',
-      transitions: ['open', 'in_progress', 'closed']
+      transitions: ['IN_PROGRESS', 'CANCELED']
     },
-    closed: {
+    RESOLVED: {
+      name: 'Resolved',
+      transitions: ['IN_PROGRESS', 'CLOSED']
+    },
+    CLOSED: {
       name: 'Closed',
-      transitions: ['open']
+      transitions: []
+    },
+    CANCELED: {
+      name: 'Canceled',
+      transitions: []
     }
   },
 
   transitions: {
-    draft_to_open: {
-      from: 'draft',
-      to: 'open',
-      name: 'Open Ticket'
+    start_progress: {
+      from: 'NEW',
+      to: 'IN_PROGRESS',
+      name: 'Start Progress'
     },
-    open_to_in_progress: {
-      from: 'open',
-      to: 'in_progress',
-      name: 'Start Work'
-    },
-    in_progress_to_review: {
-      from: 'in_progress',
-      to: 'pending_review',
-      name: 'Submit for Review'
-    },
-    any_to_hold: {
-      from: ['open', 'in_progress', 'pending_review'],
-      to: 'hold',
+    put_on_hold: {
+      from: 'IN_PROGRESS',
+      to: 'ON_HOLD',
       name: 'Put on Hold'
     },
-    hold_to_open: {
-      from: 'hold',
-      to: 'open',
-      name: 'Resume Ticket'
+    resume_progress: {
+      from: 'ON_HOLD',
+      to: 'IN_PROGRESS',
+      name: 'Resume Progress'
     },
-    any_to_closed: {
-      from: ['open', 'in_progress', 'pending_review', 'hold'],
-      to: 'closed',
+    resolve_ticket: {
+      from: 'IN_PROGRESS',
+      to: 'RESOLVED',
+      name: 'Resolve Ticket'
+    },
+    reopen_ticket: {
+      from: 'RESOLVED',
+      to: 'IN_PROGRESS',
+      name: 'Reopen Ticket'
+    },
+    close_ticket: {
+      from: 'RESOLVED',
+      to: 'CLOSED',
       name: 'Close Ticket'
     },
-    closed_to_open: {
-      from: 'closed',
-      to: 'open',
-      name: 'Reopen Ticket'
+    cancel_ticket: {
+      from: ['NEW', 'IN_PROGRESS', 'ON_HOLD'],
+      to: 'CANCELED',
+      name: 'Cancel Ticket'
     }
   },
 

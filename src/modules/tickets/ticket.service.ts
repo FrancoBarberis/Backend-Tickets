@@ -18,10 +18,11 @@ export function findAllTickets(): Ticket[] {
 
 export function createNewTicket({ shortDescription, description }: TicketInput): Ticket {
     const ticket: Ticket = {
-        id: randomUUID(),
+        id: randomUUID() as UUID,
         description: description || "",
         shortDescription: shortDescription,
-        status: "OPEN",
+        state: "NEW",       // Usando el nuevo modelo
+        priority: "LOW",    // Por defecto en la creación
         createdAt: new Date(),
         updatedAt: new Date()
     };
@@ -35,7 +36,7 @@ export function findTicketWithId(id:UUID){
 }
 
 export function getTicketComments(id:UUID){
-    return ;
+    return comments.filter(c => c.ticketId === id); // Fix minimal para devolver algo real si coincide
 }
 
 export function postTicketComment(){
