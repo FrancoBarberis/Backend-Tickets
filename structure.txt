@@ -1,0 +1,41 @@
+src/
+├── app.js
+├── server.js
+├── config/
+│   ├── env.js
+│   ├── database.js
+│   └── logger.js
+├── modules/
+│   ├── auth/
+│   │   ├── auth.controller.js
+│   │   ├── auth.service.js
+│   │   ├── auth.routes.js
+│   │   └── auth.middleware.js
+│   ├── users/
+│   │   ├── user.model.js
+│   │   ├── user.controller.js
+│   │   ├── user.service.js
+│   │   └── user.routes.js
+│   ├── tickets/
+│   │   ├── ticket.model.js
+│   │   ├── ticket.controller.js
+│   │   ├── ticket.service.js
+│   │   ├── ticket.routes.js
+│   │   └── ticket.workflow.js
+│   └── comments/
+│       ├── comment.model.js
+│       ├── comment.service.js
+│       └── comment.routes.js
+├── common/
+│   ├── middlewares/
+│   │   ├── error.middleware.js
+│   │   ├── auth.middleware.js
+│   │   └── role.middleware.js
+│   ├── utils/
+│   │   ├── errors.js
+│   │   └── responses.js
+│   └── constants/
+│       ├── roles.js
+│       └── ticketStatus.js
+├── routes.js
+└── index.js
