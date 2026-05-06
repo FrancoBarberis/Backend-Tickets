@@ -31,14 +31,28 @@ export function createNewTicket({ shortDescription, description }: TicketInput):
     return ticket;
 }
 
-export function findTicketWithId(id:UUID){
+export function findTicketWithId(id: UUID) {
     return tickets.find(ticket => ticket.id === id);
 }
 
-export function getTicketComments(id:UUID){
+export function findTicketComments(id: UUID) {
     return comments.filter(c => c.ticketId === id); // Fix minimal para devolver algo real si coincide
 }
 
-export function postTicketComment(){
-    return null;
+export function createTicketComment(id: UUID, commentText: string) {
+    const ticket = findTicketWithId(id);
+    if (!ticket) {
+        return null;
+    }
+
+    const newComment: Comment = {
+        id: randomUUID() as UUID,
+        ticketId: id,
+        text: commentText,
+        authorId: randomUUID() as UUID, // TODO: obtener del usuario autenticado
+        createdAt: new Date()
+    };
+
+    comments.push(newComment);
+    return newComment;
 }
