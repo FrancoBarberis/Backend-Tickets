@@ -1,6 +1,7 @@
 // Ticket service
 import { randomUUID } from "crypto";
 
+// BD SIMULADA EN CACHE
 const tickets = [];
 
 export function findAllTickets() {
