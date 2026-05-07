@@ -6,7 +6,7 @@ import { UUID } from "crypto";
 
 export async function findAll(): Promise<Ticket[]> {
     const result = await pool.query('SELECT * FROM tickets ORDER BY created_at DESC');
-    return result.rows.map(row => mapTicket(row));
+    return result.rows.map((row: any) => mapTicket(row));
 }
 
 export async function create(shortDescription: string, description: string): Promise<Ticket> {
