@@ -1,58 +1,34 @@
 // Ticket service
 import { Ticket } from "./ticket.model.js";
 import { Comment } from "./ticket.comments.model.js";
-import { randomUUID, UUID } from "crypto";
+import { UUID } from "crypto";
+import * as ticketRepository from "./ticket.repository.js";
 
 interface TicketInput {
     shortDescription: string;
     description?: string;
 }
 
-// BD SIMULADA EN CACHE
-const tickets: Ticket[] = [];
-const comments: Comment[] = [];
-
-export function findAllTickets(): Ticket[] {
-    return tickets;
+export async function findAllTickets(): Promise<Ticket[]> {
+    return ticketRepository.findAll();
 }
 
-export function createNewTicket({ shortDescription, description }: TicketInput): Ticket {
-    const ticket: Ticket = {
-        id: randomUUID() as UUID,
-        description: description || "",
-        shortDescription: shortDescription,
-        state: "NEW",       // Usando el nuevo modelo
-        priority: "LOW",    // Por defecto en la creación
-        createdAt: new Date(),
-        updatedAt: new Date()
-    };
-
-    tickets.push(ticket);
-    return ticket;
+export async function createNewTicket({ shortDescription, description }: TicketInput): Promise<Ticket> {
+    return ticketRepository.create(shortDescription, description || "");
 }
 
-export function findTicketWithId(id: UUID) {
-    return tickets.find(ticket => ticket.id === id);
+export async function findTicketWithId(id: UUID): Promise<Ticket | null> {
+    return ticketRepository.findById(id);
 }
 
-export function findTicketComments(id: UUID) {
-    return comments.filter(c => c.ticketId === id); // Fix minimal para devolver algo real si coincide
+export async function findTicketComments(id: UUID): Promise<Comment[]> {
+    return ticketRepository.findCommentsByTicketId(id);
 }
 
-export function createTicketComment(id: UUID, commentText: string) {
-    const ticket = findTicketWithId(id);
-    if (!ticket) {
-        return null;
-    }
+export async function createTicketComment(id: UUID, commentText: string): Promise<Comment | null> {
+    // Verificar si el ticket existe primero
+    const exists = await ticketRepository.ticketExists(id);
+    if (!exists) return null;
 
-    const newComment: Comment = {
-        id: randomUUID() as UUID,
-        ticketId: id,
-        text: commentText,
-        authorId: randomUUID() as UUID, // TODO: obtener del usuario autenticado
-        createdAt: new Date()
-    };
-
-    comments.push(newComment);
-    return newComment;
+    return ticketRepository.createComment(id, commentText);
 }
